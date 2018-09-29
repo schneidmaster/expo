@@ -149,6 +149,10 @@ PODS:
   - EXAdsAdMob (1.0.0):
     - EXCore
     - Google-Mobile-Ads-SDK
+  - EXAppLoaderProvider (1.0.2)
+  - EXBackgroundFetch (1.0.0):
+    - EXCore
+    - EXTaskManagerInterface
   - EXBarCodeScanner (1.0.0):
     - EXCore
   - EXBarCodeScannerInterface (1.0.0):
@@ -219,6 +223,9 @@ PODS:
     - EXCore
     - EXFontInterface
     - React
+  - EXReactNativeLoader (1.0.0):
+    - EXCore
+    - React
   - EXSegment (1.0.0):
     - Analytics (~> 3.5)
     - EXCore
@@ -228,6 +235,12 @@ PODS:
   - EXSensorsInterface (1.0.2):
     - EXCore
   - EXSMS (1.0.2):
+    - EXCore
+  - EXTaskManager (1.0.0):
+    - EXConstantsInterface
+    - EXCore
+    - EXTaskManagerInterface
+  - EXTaskManagerInterface (1.0.0):
     - EXCore
   - Fabric (1.7.9)
   - FBAudienceNetwork (4.99.0)
@@ -921,6 +934,8 @@ DEPENDENCIES:
   - Crashlytics (~> 3.8)
   - DoubleConversion (from `../react-native-lab/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXAdsAdMob (from `../modules/expo-ads-admob/ios`)
+  - EXAppLoaderProvider (from `../modules/expo-app-loader-provider/ios`)
+  - EXBackgroundFetch (from `../modules/expo-background-fetch/ios`)
   - EXBarCodeScanner (from `../modules/expo-barcode-scanner/ios`)
   - EXBarCodeScannerInterface (from `../modules/expo-barcode-scanner-interface/ios`)
   - EXCamera (from `../modules/expo-camera/ios`)
@@ -945,10 +960,13 @@ DEPENDENCIES:
   - EXPermissionsInterface (from `../modules/expo-permissions-interface/ios`)
   - EXPrint (from `../modules/expo-print/ios`)
   - EXReactNativeAdapter (from `../modules/expo-react-native-adapter/ios`)
+  - EXReactNativeLoader (from `../modules/expo-react-native-loader/ios`)
   - EXSegment (from `../modules/expo-analytics-segment/ios`)
   - EXSensors (from `../modules/expo-sensors/ios`)
   - EXSensorsInterface (from `../modules/expo-sensors-interface/ios`)
   - EXSMS (from `../modules/expo-sms/ios`)
+  - EXTaskManager (from `../modules/expo-task-manager/ios`)
+  - EXTaskManagerInterface (from `../modules/expo-task-manager-interface/ios`)
   - Fabric (~> 1.6)
   - FBAudienceNetwork (= 4.99.0)
   - FBSDKCoreKit (~> 4.28)
@@ -1212,6 +1230,10 @@ EXTERNAL SOURCES:
     :podspec: "../react-native-lab/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXAdsAdMob:
     :path: "../modules/expo-ads-admob/ios"
+  EXAppLoaderProvider:
+    :path: "../modules/expo-app-loader-provider/ios"
+  EXBackgroundFetch:
+    :path: "../modules/expo-background-fetch/ios"
   EXBarCodeScanner:
     :path: "../modules/expo-barcode-scanner/ios"
   EXBarCodeScannerInterface:
@@ -1260,6 +1282,8 @@ EXTERNAL SOURCES:
     :path: "../modules/expo-print/ios"
   EXReactNativeAdapter:
     :path: "../modules/expo-react-native-adapter/ios"
+  EXReactNativeLoader:
+    :path: "../modules/expo-react-native-loader/ios"
   EXSegment:
     :path: "../modules/expo-analytics-segment/ios"
   EXSensors:
@@ -1268,6 +1292,10 @@ EXTERNAL SOURCES:
     :path: "../modules/expo-sensors-interface/ios"
   EXSMS:
     :path: "../modules/expo-sms/ios"
+  EXTaskManager:
+    :path: "../modules/expo-task-manager/ios"
+  EXTaskManagerInterface:
+    :path: "../modules/expo-task-manager-interface/ios"
   Folly:
     :podspec: "../react-native-lab/react-native/third-party-podspecs/Folly.podspec"
   glog:
@@ -1360,6 +1388,8 @@ SPEC CHECKSUMS:
   Crashlytics: 7f2e38d302d9da96475b3d64d86fb29e31a542b7
   DoubleConversion: e22e0762848812a87afd67ffda3998d9ef29170c
   EXAdsAdMob: e3487aceb377e0412f8665a48f3b72fc5f3d7723
+  EXAppLoaderProvider: 568d6ea8176c1cb7d6821bdbf6517453fe74d914
+  EXBackgroundFetch: 3639f45d1d3929ec6ed6b93f45f9c98ca04a4e12
   EXBarCodeScanner: bae21e0fd0176f1defef73dc5686102ae7c3dd65
   EXBarCodeScannerInterface: 72feaa2c6d0fd4c4cad09ca1c4d61ffd0fe0a70d
   EXCamera: b3588236786239a36f441b2adb32631ca61330f5
@@ -1378,16 +1408,19 @@ SPEC CHECKSUMS:
   EXGL-CPP: a7fd8224fdc8a2503ba5531ceca1b02c4432f2b2
   EXImageLoaderInterface: e6aa5b14ab3376c4771b18b798aaa6b696d66001
   EXLocalAuthentication: 9b6263750716482fd5e176093c5b00fd22d4a1ff
-  EXLocation: d3826ac9100a338192c9913af353ced1e6fa9a51
+  EXLocation: 0b0a7b9120a177109ad1d64e762b54822f328cdc
   EXMediaLibrary: 1410f21ff08dbc3ee783003b27fcf72ad20bb9c2
   EXPermissions: 1c524493270ba64f494f805b6e0e75d4b498ecb5
   EXPermissionsInterface: 814a15d3259873c39646ed3cfe58bb49160445c1
   EXPrint: 7e89a677edf046516d1c7c812c24e7714f040bdd
   EXReactNativeAdapter: 93f6b26a2bb583e653e5fab04377704840e1a0e8
+  EXReactNativeLoader: f74262a3468f35a5bb0ab246c304f87c1eb45e12
   EXSegment: 558683a67d8e898448d9a3af71f3b36af7664ce9
   EXSensors: 06a11a8c6c08d62fa20ae64e61cd602be2bf36a2
   EXSensorsInterface: eca1381ec807ec2439e2f1607f3fa4297deaaf20
   EXSMS: 3fa7cd245d744abc70a918c6d991e09c63ba46e3
+  EXTaskManager: d74f8100d25d52eed4367b8726e98f547ae5980b
+  EXTaskManagerInterface: cc735a1d9dc9a8dde27d4ed779eec6ce96f0a0ab
   Fabric: a2917d3895e4c1569b9c3170de7320ea1b1e6661
   FBAudienceNetwork: 80275c0a28574ff5ce820abdc251d05e07e6ae7a
   FBSDKCoreKit: 0ff57f093b85c8c9d5aba697d3edf68a8960ce78
@@ -1426,6 +1459,6 @@ SPEC CHECKSUMS:
   yogaABI29_0_0: 4fdf5bbd444d2968ec42ccadec97b02c672eda80
   yogaABI30_0_0: 4c86e39466368a6b018b8b78aeb654b6620512a1
 
-PODFILE CHECKSUM: b57834a916dc700304a8937efad924ac4409fe32
+PODFILE CHECKSUM: 07d38db9df111803f18d0994a9f7483e5d526435
 
 COCOAPODS: 1.5.3

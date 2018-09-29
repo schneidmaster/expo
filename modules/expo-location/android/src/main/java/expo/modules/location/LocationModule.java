@@ -28,6 +28,9 @@ import expo.core.interfaces.ModuleRegistryConsumer;
 import expo.core.interfaces.services.EventEmitter;
 import expo.core.interfaces.services.UIManager;
 import expo.interfaces.permissions.Permissions;
+import expo.interfaces.taskManager.TaskConsumerInterface;
+import expo.interfaces.taskManager.TaskManagerInterface;
+import expo.modules.location.taskConsumers.LocationTaskConsumer;
 import expo.modules.location.utils.TimeoutObject;
 import io.nlopez.smartlocation.OnGeocodingListener;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
@@ -50,6 +53,7 @@ public class LocationModule extends ExportedModule implements ModuleRegistryCons
   private EventEmitter mEventEmitter;
   private UIManager mUIManager;
   private Permissions mPermissions;
+  private TaskManagerInterface mTaskManager;
 
   private float[] mGravity;
   private float[] mGeomagnetic;
@@ -81,6 +85,7 @@ public class LocationModule extends ExportedModule implements ModuleRegistryCons
     mEventEmitter = moduleRegistry.getModule(EventEmitter.class);
     mUIManager = moduleRegistry.getModule(UIManager.class);
     mPermissions = moduleRegistry.getModule(Permissions.class);
+    mTaskManager = moduleRegistry.getModule(TaskManagerInterface.class);
 
     if (mUIManager != null) {
       mUIManager.registerLifecycleEventListener(this);
@@ -90,12 +95,14 @@ public class LocationModule extends ExportedModule implements ModuleRegistryCons
   public static Bundle locationToMap(Location location) {
     Bundle map = new Bundle();
     Bundle coords = new Bundle();
+
     coords.putDouble("latitude", location.getLatitude());
     coords.putDouble("longitude", location.getLongitude());
     coords.putDouble("altitude", location.getAltitude());
     coords.putDouble("accuracy", location.getAccuracy());
     coords.putDouble("heading", location.getBearing());
     coords.putDouble("speed", location.getSpeed());
+
     map.putBundle("coords", coords);
     map.putDouble("timestamp", location.getTime());
     map.putBoolean("mocked", location.isFromMockProvider());
@@ -105,6 +112,7 @@ public class LocationModule extends ExportedModule implements ModuleRegistryCons
 
   private static Bundle addressToMap(Address address) {
     Bundle map = new Bundle();
+
     map.putString("city", address.getLocality());
     map.putString("street", address.getThoroughfare());
     map.putString("region", address.getAdminArea());
@@ -507,6 +515,27 @@ public class LocationModule extends ExportedModule implements ModuleRegistryCons
             promise.reject("E_LOCATION_UNAUTHORIZED", "Not authorized to use location services");
           }
         });
+  }
+
+  @ExpoMethod
+  public void registerLocationTaskAsync(String taskName, Map<String, Object> options, final Promise promise) {
+    try {
+      TaskConsumerInterface consumer = new LocationTaskConsumer(mContext, mTaskManager);
+      mTaskManager.registerTask(taskName, consumer, options);
+      promise.resolve(null);
+    } catch (Exception e) {
+      promise.reject(e);
+    }
+  }
+
+  @ExpoMethod
+  public void unregisterLocationTaskAsync(String taskName, final Promise promise) {
+    try {
+      mTaskManager.unregisterTaskWithName(taskName);
+      promise.resolve(null);
+    } catch (Exception e) {
+      promise.reject(e);
+    }
   }
 
   // App lifecycle listeners

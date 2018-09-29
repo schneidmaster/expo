@@ -151,6 +151,9 @@ module.exports = {
   get Audio() {
     return require('./av/Audio');
   },
+  get BackgroundFetch() {
+    return require('expo-background-fetch').BackgroundFetch;
+  },
   get Brightness() {
     return require('./Brightness');
   },
@@ -247,6 +250,9 @@ module.exports = {
   },
   get StoreReview() {
     return require('./StoreReview');
+  },
+  get TaskManager() {
+    return require('expo-task-manager').TaskManager;
   },
   get Updates() {
     return require('./Updates');

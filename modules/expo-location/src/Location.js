@@ -20,11 +20,6 @@ type LocationOptions = {
   distanceInterval?: number,
 };
 
-type LocationTaskOptions = {
-  type: string,
-  backgroundOnly: boolean,
-};
-
 type LocationData = {
   coords: {
     latitude: number,
@@ -41,6 +36,20 @@ type HeadingData = {
   trueHeading: number,
   magHeading: number,
   accuracy: number,
+};
+
+type LocationTaskOptions = {
+  enableHighAccuracy?: boolean,
+  showsBackgroundLocationIndicator?: boolean,
+};
+
+type Region = {
+  identifier?: string,
+  latitude: number,
+  longitude: number,
+  radius: number,
+  notifyOnEnter?: boolean,
+  notifyOnExit?: boolean,
 };
 
 type LocationCallback = (data: LocationData) => any;
@@ -341,6 +350,59 @@ async function _getCurrentPositionAsyncWrapper(
   }
 }
 
+async function requestPermissionsAsync() {
+  return await Location.requestPermissionsAsync();
+}
+
+// --- Background location updates
+
+function _validateTaskName(taskName: string): void {
+  invariant(taskName && typeof taskName === 'string', '`taskName` must be a non-empty string.');
+}
+
+async function startLocationUpdatesAsync(
+  taskName: string,
+  options: LocationTaskOptions = {}
+): Promise<void> {
+  _validateTaskName(taskName);
+  return Location.startLocationUpdatesAsync(taskName, options);
+}
+
+async function stopLocationUpdatesAsync(taskName: string): Promise<void> {
+  _validateTaskName(taskName);
+  return Location.stopLocationUpdatesAsync(taskName);
+}
+
+// --- Geofencing
+
+const GeofencingEventType = Location.GeofencingEventType;
+const GeofencingRegionState = Location.GeofencingRegionState;
+
+function _validateRegions(regions: Array<Region>) {
+  for (const region of regions) {
+    if (typeof region.latitude !== 'number') {
+      throw new TypeError(`Region's latitude must be a number. Got '${region.latitude}' instead.`);
+    }
+    if (typeof region.longitude !== 'number') {
+      throw new TypeError(`Region's longitude must be a number. Got '${region.longitude}' instead.`);
+    }
+    if (typeof region.radius !== 'number') {
+      throw new TypeError(`Region's radius must be a number. Got '${region.radius}' instead.`);
+    }
+  }
+}
+
+async function startGeofencingAsync(taskName: string, regions: Array<Region>): Promise<void> {
+  _validateTaskName(taskName);
+  _validateRegions(regions);
+  return Location.startGeofencingAsync(taskName, regions);
+}
+
+async function stopGeofencingAsync(taskName: string): Promise<void> {
+  _validateTaskName(taskName);
+  return Location.stopGeofencingAsync(taskName);
+}
+
 // Polyfill navigator.geolocation for interop with the core react-native and web API approach to
 // geolocation
 window.navigator.geolocation = {
@@ -362,6 +424,17 @@ export default {
   geocodeAsync,
   reverseGeocodeAsync,
   setApiKey,
+  requestPermissionsAsync,
+
+  // background location
+  startLocationUpdatesAsync,
+  stopLocationUpdatesAsync,
+
+  // geofencing
+  GeofencingEventType,
+  GeofencingRegionState,
+  startGeofencingAsync,
+  stopGeofencingAsync,
 
   // For internal purposes
   EventEmitter: LocationEventEmitter,

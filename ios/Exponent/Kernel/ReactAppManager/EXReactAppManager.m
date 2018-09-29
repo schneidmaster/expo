@@ -69,6 +69,7 @@ typedef void (^SDK21RCTSourceLoadBlock)(NSError *error, NSData *source, int64_t 
   if (self = [super init]) {
     _appRecord = record;
     _initialProps = initialProps;
+    _isHeadless = NO;
   }
   return self;
 }
@@ -111,10 +112,16 @@ typedef void (^SDK21RCTSourceLoadBlock)(NSError *error, NSData *source, int64_t 
                        logThreshold:[self logLevel]
                        ];
     _reactBridge = [[bridgeClass alloc] initWithDelegate:self launchOptions:[self launchOptionsForBridge]];
-    _reactRootView = [[rootViewClass alloc] initWithBridge:_reactBridge
-                                                moduleName:[self applicationKeyForRootView]
-                                         initialProperties:[self initialPropertiesForRootView]];
-    
+
+    if (!_isHeadless) {
+      NSLog(@"ReactAppManager.rebuildBridge 3");
+      // We don't want to run the whole JS app if app launches in the background,
+      // so we're omitting creation of RCTRootView that triggers runApplication and setups React view hierarchy.
+      _reactRootView = [[rootViewClass alloc] initWithBridge:_reactBridge
+                                                  moduleName:[self applicationKeyForRootView]
+                                           initialProperties:[self initialPropertiesForRootView]];
+    }
+
     [_delegate reactAppManagerIsReadyForLoad:self];
     
     NSAssert([_reactBridge isLoading], @"React bridge should be loading once initialized");
