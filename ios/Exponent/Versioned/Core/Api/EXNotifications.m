@@ -136,8 +136,18 @@ RCT_EXPORT_METHOD(addCategory: (NSString *) categoryId
   
   UNNotificationCategory * newCategory = [UNNotificationCategory categoryWithIdentifier:categoryId actions:actionsArray intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
   
-  [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:[NSSet setWithObject:newCategory]];
-  resolve(@"done");
+  [[UNUserNotificationCenter currentNotificationCenter] getNotificationCategoriesWithCompletionHandler:^(NSSet * categories) {
+    NSMutableSet * categoriesMutable = [categories mutableCopy];
+    for( UNNotificationCategory * category in categoriesMutable) {
+      if ([category.identifier isEqualToString:categoryId]) {
+        [categoriesMutable removeObject:category];
+        break;
+      }
+    }
+    [categoriesMutable addObject:newCategory];
+    [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:categoriesMutable];
+    resolve(@"done");
+  }];
 }
 
 RCT_EXPORT_METHOD(scheduleLocalNotification:(NSDictionary *)payload
