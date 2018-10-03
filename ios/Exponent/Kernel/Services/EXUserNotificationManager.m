@@ -76,7 +76,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                                          userText:userText];
     }
   }
-  completionHandler(UNNotificationPresentationOptionNone);
+  completionHandler(UNNotificationPresentationOptionAlert + UNNotificationPresentationOptionSound);
 }
 
 - (void)authorizeAndInit: (NSDictionary *) launchOptions

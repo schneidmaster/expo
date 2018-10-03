@@ -94,15 +94,13 @@ RCT_EXPORT_METHOD(presentLocalNotification:(NSDictionary *)payload
                   rejecter:(__unused RCTPromiseRejectBlock)reject)
 {
   UNMutableNotificationContent* content = [self _localNotificationFromPayload:payload];
-  
+
   [EXUtil performSynchronouslyOnMainThread:^{
-    UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:1 repeats:NO];
     UNNotificationRequest* request = [UNNotificationRequest
-                                      requestWithIdentifier:content.userInfo[@"id"] content:content trigger:trigger];
+                                      requestWithIdentifier:content.userInfo[@"id"] content:content trigger:nil];
     [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
       if (error != nil) {
-        NSLog(@"%@", error.localizedDescription);
-        reject(@"Could not make notification request", error.localizedDescription, error);
+        reject(@"E_NOTIF", [NSString stringWithFormat:@"Could not add a notification request: %@", error.localizedDescription], error);
       } else {
         resolve(content.userInfo[@"id"]);
       }
@@ -111,14 +109,14 @@ RCT_EXPORT_METHOD(presentLocalNotification:(NSDictionary *)payload
 
 }
 
-RCT_EXPORT_METHOD(addCategory: (NSString *) categoryId
-                  actions: (NSArray *) actions
+RCT_EXPORT_METHOD(addCategory: (NSString *)categoryId
+                  actions: (NSArray *)actions
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(__unused RCTPromiseRejectBlock)reject)
 {
   NSMutableArray<UNNotificationAction *> * actionsArray = [[NSMutableArray alloc] init];
   
-  for( NSArray * action in actions) {
+  for(NSArray *action in actions) {
     int optionsInt = [(NSNumber *)action[2] intValue];
     UNNotificationActionOptions options = UNNotificationActionOptionForeground + optionsInt;
                                      
@@ -146,7 +144,7 @@ RCT_EXPORT_METHOD(addCategory: (NSString *) categoryId
     }
     [categoriesMutable addObject:newCategory];
     [[UNUserNotificationCenter currentNotificationCenter] setNotificationCategories:categoriesMutable];
-    resolve(@"done");
+    resolve(@(YES));
   }];
 }
 
@@ -267,7 +265,6 @@ RCT_EXPORT_METHOD(setBadgeNumberAsync:(nonnull NSNumber *)number
 
 - (UNMutableNotificationContent *)_localNotificationFromPayload:(NSDictionary *)payload
 {
-  
   UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
   NSString *uniqueId = [[NSUUID new] UUIDString];
 
@@ -287,10 +284,10 @@ RCT_EXPORT_METHOD(setBadgeNumberAsync:(nonnull NSNumber *)number
   }
  
   content.userInfo = @{
-   @"body": payload[@"data"],
-   @"experienceId": self.experienceId,
-   @"id": uniqueId
-  };
+                       @"body":payload[@"data"],
+                       @"experienceId":self.experienceId,
+                       @"id":uniqueId
+                       };
   
   return content;
 }
