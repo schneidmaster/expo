@@ -93,8 +93,8 @@ RCT_EXPORT_METHOD(presentLocalNotification:(NSDictionary *)payload
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(__unused RCTPromiseRejectBlock)reject)
 {
-
   UNMutableNotificationContent* content = [self _localNotificationFromPayload:payload];
+  
   [EXUtil performSynchronouslyOnMainThread:^{
     UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:1 repeats:NO];
     UNNotificationRequest* request = [UNNotificationRequest

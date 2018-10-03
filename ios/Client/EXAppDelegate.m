@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
   _window.rootViewController = _rootViewController;
 
   [_window makeKeyAndVisible];
-  
+
   return YES;
 }
 
@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
-  [[ExpoKit sharedInstance] application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler: completionHandler];
+  [[ExpoKit sharedInstance] application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
 
 @end

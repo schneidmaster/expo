@@ -27,7 +27,9 @@ NSString * const kEXKernelClearJSCacheUserDefaultsKey = @"EXKernelClearJSCacheUs
 const NSUInteger kEXErrorCodeAppForbidden = 424242;
 
 @interface EXKernel () <EXKernelAppRegistryDelegate>
-@property (atomic, strong) EXSendNotificationParams * sendNotificationParams;
+
+@property (atomic, strong) EXSendNotificationParams * pendingNotificationParams;
+
 @end
 
 // Protocol that should be implemented by all versions of EXAppState class.
@@ -140,16 +142,16 @@ const NSUInteger kEXErrorCodeAppForbidden = 424242;
   [self _moveAppToVisible:app];
 }
 
-- (void)runIfNotificationIsPresent
+- (void)flushPendingNotifications
 {
-  if (_sendNotificationParams == nil) return;
-  [self sendNotification:_sendNotificationParams.dic
-       toExperienceWithId:_sendNotificationParams.expId
-           fromBackground:_sendNotificationParams.isFromBackground
-                 isRemote:_sendNotificationParams.isRemote
-                 actionId:_sendNotificationParams.actionId
-                 userText:_sendNotificationParams.userText];
-  _sendNotificationParams = nil;
+  if (_pendingNotificationParams == nil) return;
+  [self sendNotification:_pendingNotificationParams.dic
+       toExperienceWithId:_pendingNotificationParams.experienceId
+           fromBackground:_pendingNotificationParams.isFromBackground
+                 isRemote:_pendingNotificationParams.isRemote
+                 actionId:_pendingNotificationParams.actionId
+                 userText:_pendingNotificationParams.userText];
+  _pendingNotificationParams = nil;
 }
 
 - (id)nativeModuleForAppManager:(EXReactAppManager *)appManager named:(NSString *)moduleName
@@ -181,11 +183,15 @@ const NSUInteger kEXErrorCodeAppForbidden = 424242;
       toExperienceWithId:(NSString *)destinationExperienceId
           fromBackground:(BOOL)isFromBackground
                 isRemote:(BOOL)isRemote
-                actionId: (NSString *) actionId
-                userText: (NSString *) userText
+                actionId: (NSString *)actionId
+                userText: (NSString *)userText
 {
   EXKernelAppRecord *destinationApp = [_appRegistry newestRecordWithExperienceId:destinationExperienceId];
-  NSDictionary *bodyWithOrigin = [self _notificationPropsWithBody:notifBody isFromBackground:isFromBackground isRemote:isRemote actionId: actionId userText: userText];
+  NSDictionary *bodyWithOrigin = [self _notificationPropsWithBody:notifBody
+                                                 isFromBackground:isFromBackground
+                                                         isRemote:isRemote
+                                                         actionId:actionId
+                                                         userText:userText];
   if (destinationApp) {
     // send the body to the already-open experience
     [self _dispatchJSEvent:@"Exponent.notification" body:bodyWithOrigin toApp:destinationApp];
@@ -202,8 +208,8 @@ const NSUInteger kEXErrorCodeAppForbidden = 424242;
             [weakSelf createNewAppWithUrl:url initialProps:@{ @"notification": bodyWithOrigin }];
           }
         } else {
-          weakSelf.sendNotificationParams = [[EXSendNotificationParams alloc] initWithExpId:(NSString *)destinationExperienceId
-                                                                           notificationBody:(NSDictionary *)notifBody
+          weakSelf.pendingNotificationParams = [[EXSendNotificationParams alloc] initWithExpId:destinationExperienceId
+                                                                           notificationBody:notifBody
                                                                                    isRemote:[NSNumber numberWithBool:isRemote]
                                                                            isFromBackground:[NSNumber numberWithBool:isFromBackground]
                                                                                    actionId:actionId

@@ -73,7 +73,7 @@ export default class UserNotificationsScreen extends React.Component {
   };
 
   _waitTenSec = async () => {
-    this.notificationID = await Notifications.scheduleLocalNotificationWithTimeIntervalAsync(
+    this.notificationId = await Notifications.scheduleLocalNotificationWithTimeIntervalAsync(
       {
         title: 'notification',
         body: 'notification-body',
@@ -86,11 +86,11 @@ export default class UserNotificationsScreen extends React.Component {
   };
 
   _cancelWithId = () => {
-    Notifications.cancelScheduledNotificationAsync(this.notificationID);
+    Notifications.cancelScheduledNotificationAsync(this.notificationId);
   };
 
   _cancelAll = () => {
-    Notifications.cancelAllScheduledNotificationsAsync(this.notificationID);
+    Notifications.cancelAllScheduledNotificationsAsync();
   };
 
   render() {

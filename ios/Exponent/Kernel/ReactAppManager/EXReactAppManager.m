@@ -111,7 +111,6 @@ typedef void (^SDK21RCTSourceLoadBlock)(NSError *error, NSData *source, int64_t 
                        logThreshold:[self logLevel]
                        ];
     _reactBridge = [[bridgeClass alloc] initWithDelegate:self launchOptions:[self launchOptionsForBridge]];
-    
     _reactRootView = [[rootViewClass alloc] initWithBridge:_reactBridge
                                                 moduleName:[self applicationKeyForRootView]
                                          initialProperties:[self initialPropertiesForRootView]];

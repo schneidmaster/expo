@@ -5,11 +5,10 @@
 #import "EXRemoteNotificationManager.h"
 
 @interface EXUserNotificationManager()
-@property (atomic) UNUserNotificationCenter *center;
-@property NSDictionary *Categories;
 @end
 
 @implementation EXUserNotificationManager
+
 + (instancetype)sharedInstance
 {
   static EXUserNotificationManager *theManager;
@@ -26,15 +25,13 @@
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler
 {
-  if (![[EXKernel sharedInstance].serviceRegistry.remoteNotificationManager supportsCurrentRuntimeEnvironment]) {
-    DDLogWarn(@"Expo Remote Notification services won't work in an ExpoKit app because Expo cannot manage your APNS certificates.");
-  }
-  BOOL isFromBackground = !([UIApplication sharedApplication].applicationState == UIApplicationStateActive);  NSDictionary *payload = response.notification.request.content.userInfo;
+  BOOL isFromBackground = !([UIApplication sharedApplication].applicationState == UIApplicationStateActive);
+  NSDictionary *payload = response.notification.request.content.userInfo;
   if (payload) {
-    NSDictionary *body = (payload[@"body"])?[payload objectForKey:@"body"]:@{};
-    NSString *experienceId = [payload objectForKey:@"experienceId"];
-    NSString * userText = @"";
-    NSString * actionId = @"DEFAULT_ACTION";
+    NSDictionary *body = payload[@"body"];
+    NSString *experienceId = payload[@"experienceId"];
+    NSString *userText = @"";
+    NSString *actionId = @"DEFAULT_ACTION";
     
     if ([response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier]) {
       actionId = @"DISMISS_ACTION";
@@ -52,8 +49,8 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                                toExperienceWithId:experienceId
                                    fromBackground:isFromBackground
                                          isRemote:isRemote
-                                         actionId: actionId
-                                         userText: userText];
+                                         actionId:actionId
+                                         userText:userText];
     }
   }
   completionHandler();
@@ -65,9 +62,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 {
   NSDictionary *payload = notification.request.content.userInfo;
   if (payload) {
-    NSDictionary *body = (payload[@"body"])?[payload objectForKey:@"body"]:@{};
-    NSString *experienceId = [payload objectForKey:@"experienceId"];
-    NSString * userText = @"";
+    NSDictionary *body = payload[@"body"];
+    NSString *experienceId = payload[@"experienceId"];
+    NSString *userText = @"";
     
     BOOL isRemote = [notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]];
     if (body && experienceId) {
@@ -75,20 +72,19 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                                toExperienceWithId:experienceId
                                    fromBackground:NO
                                          isRemote:isRemote
-                                         actionId: @"WILL_PRESENT_ACTION"
-                                         userText: userText];
+                                         actionId:@"WILL_PRESENT_ACTION"
+                                         userText:userText];
     }
   }
-  completionHandler(UNAuthorizationOptionAlert + UNAuthorizationOptionSound);
+  completionHandler(UNNotificationPresentationOptionNone);
 }
 
 - (void)authorizeAndInit: (NSDictionary *) launchOptions
 {
-  _center = [UNUserNotificationCenter currentNotificationCenter];
-  _center.delegate = self;
+  [UNUserNotificationCenter currentNotificationCenter].delegate = self;
   
   UNAuthorizationOptions options = UNAuthorizationOptionAlert + UNAuthorizationOptionSound;
-  [_center requestAuthorizationWithOptions:options
+  [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:options
     completionHandler:^(BOOL granted, NSError * _Nullable error) {
       if (!granted) {
       }

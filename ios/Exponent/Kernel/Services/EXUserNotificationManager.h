@@ -3,8 +3,6 @@
 #import <Foundation/Foundation.h>
 #import <UserNotifications/UserNotifications.h>
 
-@class UILocalNotification;
-
 @interface EXUserNotificationManager : NSObject <UNUserNotificationCenterDelegate>
 
 + (instancetype)sharedInstance;
@@ -15,4 +13,5 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler;
+
 @end
