@@ -82,7 +82,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   completionHandler(UNAuthorizationOptionAlert + UNAuthorizationOptionSound);
 }
 
-- (void)autorizeAndInit: (NSDictionary *) launchOptions
+- (void)authorizeAndInit: (NSDictionary *) launchOptions
 {
   _center = [UNUserNotificationCenter currentNotificationCenter];
   _center.delegate = self;

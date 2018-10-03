@@ -54,7 +54,9 @@ typedef void(^EXRemoteNotificationAPNSTokenHandler)(NSData * _Nullable apnsToken
     // and in that case this method would actually be bad to call. (not just a no-op.)
     DDLogWarn(@"Expo Remote Notification services won't work in an ExpoKit app because Expo cannot manage your APNS certificates.");
   } else {
-    [RCTSharedApplication() registerForRemoteNotifications];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [RCTSharedApplication() registerForRemoteNotifications];
+    });
   }
 }
 

@@ -9,7 +9,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)registerForRemoteNotifications;
 - (void)registerAPNSToken:(nullable NSData *)token registrationError:(nullable NSError *)error;
-- (void)handleRemoteNotification:(nullable NSDictionary *)notification fromBackground:(BOOL)isFromBackground;
 - (BOOL)supportsCurrentRuntimeEnvironment;
 @end
 

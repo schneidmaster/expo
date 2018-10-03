@@ -8,7 +8,7 @@
 @interface EXUserNotificationManager : NSObject <UNUserNotificationCenterDelegate>
 
 + (instancetype)sharedInstance;
-- (void)autorizeAndInit: (NSDictionary *) launchOptions;
+- (void)authorizeAndInit: (NSDictionary *) launchOptions;
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler;

@@ -15,10 +15,25 @@ export default class UserNotificationsScreen extends React.Component {
   };
 
   async componentWillMount() {
-    await Notifications.addCategoryAsync('super-category', [
-      ['touch_action', 'touch', Notifications.RED + Notifications.UNLOCK],
-      ['add_action', 'add', 0, 'button_name', 'default text'],
-    ]);
+    const action = {
+      actionId: 'touch_action',
+      buttonTitle: 'touch',
+      isDestructive: true,
+      isAuthenticationRequired: true,
+    };
+
+    const textAction = {
+      actionId: 'add_action',
+      buttonTitle: 'add',
+      isDestructive: true,
+      isAuthenticationRequired: false,
+      textInput: {
+        submitButtonTitle: 'button_name',
+        placeholder: 'default text',
+      },
+    };
+
+    await Notifications.setCategoryAsync('super-category', [action, textAction]);
 
     this._notificationListener = Notifications.addListener(e => {
       this.setState({ gotNotification: true, actionId: e.actionId, userText: e.userText });

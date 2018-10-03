@@ -46,6 +46,9 @@ type Channel = {
 // Since that's not supported on iOS, we generate an unique string.
 type LocalNotificationId = string | number;
 
+const RED = 2;
+const UNLOCK = 1;
+
 let _emitter;
 let _initialNotification;
 
@@ -168,16 +171,36 @@ function _legacySaveChannel(id: string, channel: Channel): Promise<void> {
 }
 
 export default {
-  RED : 2,
-  UNLOCK : 1,
   /* Only used internally to initialize the notification from top level props */
   _setInitialNotification(notification: Notification) {
     _initialNotification = notification;
   },
 
   // User passes set of actions titles.
-  addCategoryAsync(categoryId, actions): Promise<string> {
-    return ExponentNotifications.addCategory(categoryId, actions);
+  setCategoryAsync(categoryId, actions): Promise<string> {
+    let convertedActions = new Array();
+    for (let action of actions) {
+      let flag = 0;
+      if (action.isDestructive) {
+        flag += RED;
+      }
+      if (action.isAuthenticationRequired) {
+        flag += UNLOCK;
+      }
+      let convertedAction = [
+        action.actionId,
+        action.buttonTitle,
+        flag
+      ];
+
+      if (action.textInput) {
+        convertedAction.push(action.textInput.submitButtonTitle);
+        convertedAction.push(action.textInput.placeholder);
+      }
+
+      convertedActions.push(convertedAction);
+    }
+    return ExponentNotifications.addCategory(categoryId, convertedActions);
   },
 
   /* Re-export */
