@@ -10,8 +10,7 @@ export default class UserNotificationsScreen extends React.Component {
   state = {
     gotNotification: false,
     expoPushToken: null,
-    actionId: null,
-    userText: null,
+    receivedEvent: null,
   };
 
   async componentWillMount() {
@@ -36,7 +35,7 @@ export default class UserNotificationsScreen extends React.Component {
     await Notifications.setCategoryAsync('super-category', [action, textAction]);
 
     this._notificationListener = Notifications.addListener(e => {
-      this.setState({ gotNotification: true, actionId: e.actionId, userText: e.userText });
+      this.setState({ gotNotification: true, receivedEvent: JSON.stringify(e) });
       console.log('event received ', e.actionId);
     });
   }
@@ -105,9 +104,7 @@ export default class UserNotificationsScreen extends React.Component {
         <Button onPress={this._cancelWithId} title="cancel" />
         <Button onPress={this._cancelAll} title="cancel all" />
         <Text> ExpoPushToken: {this.state.expoPushToken} </Text>
-        <Text> categoryId: {this.state.categoryId} </Text>
-        <Text> actionId: {this.state.actionId} </Text>
-        <Text> userInput: {this.state.userText} </Text>
+        <Text> {this.state.receivedEvent} </Text>
       </View>
     );
   }
